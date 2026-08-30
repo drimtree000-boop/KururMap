@@ -1,0 +1,1240 @@
+
+/* =========================================================
+   꾸르르 찾기 지도 - App.css
+   App.jsx 백업본 전용
+   지도 원본 비율 : 3919 × 4251
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Malgun Gothic",
+    Arial,
+    sans-serif;
+  background: #f5f5f5;
+  color: #222;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* =========================================================
+   전체 앱
+========================================================= */
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f4f5f7;
+}
+
+/* =========================================================
+   상단바
+========================================================= */
+
+.topbar {
+  height: 68px;
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 22px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 50;
+}
+
+.title {
+  min-width: 245px;
+  font-size: 21px;
+  font-weight: 800;
+  color: #252525;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   검색
+========================================================= */
+
+.search-box {
+  width: min(430px, 42vw);
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  background: #f6f6f6;
+  border: 1px solid #e1e1e1;
+  border-radius: 12px;
+}
+
+.search-box > span {
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.search-box input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #222;
+  font-size: 14px;
+}
+
+.search-box input::placeholder {
+  color: #999;
+}
+
+.search-box button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #dedede;
+  color: #666;
+  font-size: 18px;
+  line-height: 24px;
+  flex-shrink: 0;
+}
+
+.search-box button:hover {
+  background: #cfcfcf;
+}
+
+/* =========================================================
+   확대 버튼
+========================================================= */
+
+.zoom-buttons {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.zoom-buttons button {
+  min-width: 42px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #dedede;
+  background: #ffffff;
+  color: #333;
+  border-radius: 9px;
+  font-weight: 700;
+}
+
+.zoom-buttons button:first-child,
+.zoom-buttons button:last-child {
+  font-size: 21px;
+}
+
+.zoom-buttons button:hover {
+  background: #f2f2f2;
+}
+
+/* =========================================================
+   메인
+========================================================= */
+
+.main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* =========================================================
+   사이드바
+========================================================= */
+
+.sidebar {
+  width: 310px;
+  min-width: 310px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 22px 18px 30px;
+  background: #ffffff;
+  border-right: 1px solid #e4e4e4;
+  position: relative;
+  z-index: 30;
+}
+
+.sidebar h2 {
+  margin: 0 0 18px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   진행률
+========================================================= */
+
+.progress-box {
+  padding: 16px;
+  margin-bottom: 23px;
+  background: #fffaf0;
+  border: 1px solid #f0dfb7;
+  border-radius: 14px;
+}
+
+.progress-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #777;
+  margin-bottom: 6px;
+}
+
+.progress-number {
+  font-size: 24px;
+  font-weight: 800;
+  color: #242424;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 9px;
+  margin-top: 11px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #eadfca;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: #f2b84b;
+  transition: width 0.25s ease;
+}
+
+.progress-percent {
+  margin-top: 7px;
+  text-align: right;
+  font-size: 12px;
+  color: #777;
+}
+
+/* =========================================================
+   섹션 제목
+========================================================= */
+
+.section-title {
+  margin: 18px 3px 9px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #999;
+}
+
+.location-heading {
+  margin-top: 24px;
+}
+
+/* =========================================================
+   필터
+========================================================= */
+
+.filter {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 13px;
+  margin-bottom: 5px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #444;
+  text-align: left;
+  font-size: 13px;
+}
+
+.filter:hover {
+  background: #f6f6f6;
+}
+
+.filter.active {
+  background: #fff4d8;
+  border-color: #f1dfb3;
+  color: #9a6500;
+  font-weight: 800;
+}
+
+.filter span:last-child {
+  color: #999;
+  font-size: 12px;
+}
+
+/* =========================================================
+   위치 목록
+========================================================= */
+
+.locations {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.location {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #e7e7e7;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #333;
+  text-align: left;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.location:hover {
+  background: #fafafa;
+  border-color: #d5d5d5;
+}
+
+.location:active {
+  transform: scale(0.99);
+}
+
+.location.selected {
+  background: #fff8e8;
+  border-color: #e5b84e;
+}
+
+.location-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.location-main span {
+  font-size: 16px;
+}
+
+.location-main b {
+  font-size: 14px;
+}
+
+.location small {
+  display: block;
+  margin-top: 6px;
+  padding-left: 25px;
+  color: #999;
+  font-size: 11px;
+}
+
+.empty-list {
+  padding: 28px 10px;
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* =========================================================
+   지도 영역
+========================================================= */
+
+.map-area {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #dcdcdc;
+}
+
+/* =========================================================
+   지도 wrapper
+========================================================= */
+
+.map-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  user-select: none;
+  cursor: grab;
+  background: #dcdcdc;
+}
+
+.map-wrapper:active {
+  cursor: grabbing;
+}
+
+.map-wrapper.adding-mode {
+  cursor: crosshair;
+}
+
+/* =========================================================
+   지도 컨텐츠
+
+   중요:
+   JSX에서 transform을 직접 넣기 때문에
+   CSS에서는 크기/위치만 담당한다.
+========================================================= */
+
+.map-content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  /*
+    이미지 원본 비율을 CSS가 강제로 변경하지 않도록
+    width / height를 내부 이미지가 결정하게 한다.
+  */
+
+  display: block;
+
+  transform-origin: center center;
+
+  /*
+    마커의 기준점이 지도 자체가 되도록 한다.
+  */
+
+  overflow: visible;
+
+  will-change: transform;
+}
+
+/* =========================================================
+   실제 지도 이미지
+
+   절대 중요:
+   이미지가 찌그러지지 않도록 aspect-ratio 유지
+========================================================= */
+
+.map-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  /*
+    map-content 자체가 3919:4251 비율로 계산되므로
+    이미지도 그 비율을 그대로 따른다.
+  */
+
+  max-width: none;
+  max-height: none;
+
+  object-fit: fill;
+
+  user-select: none;
+  pointer-events: none;
+
+  -webkit-user-drag: none;
+
+  /*
+    브라우저가 흐릿하게 확대하지 않도록
+    이미지 렌더링 기본값 사용
+  */
+
+  image-rendering: auto;
+}
+
+/* =========================================================
+   마커
+========================================================= */
+
+.marker {
+  position: absolute;
+
+  /*
+    left / top은 JSX에서 %로 지정
+  */
+
+  transform: translate(-50%, -50%);
+
+  min-width: 54px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  padding: 3px 7px;
+
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+
+  background: #f4b840;
+
+  color: #3d2b00;
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+
+  white-space: nowrap;
+
+  z-index: 10;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.marker:hover {
+  transform: translate(-50%, -50%) scale(1.12);
+  box-shadow:
+    0 5px 13px rgba(0, 0, 0, 0.35),
+    0 0 0 2px rgba(255, 255, 255, 0.85);
+}
+
+.marker:active {
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+.marker.discovered {
+  background: #68c67c;
+  color: #ffffff;
+}
+
+.marker-dot {
+  width: 19px;
+  height: 19px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  color: #42a754;
+
+  font-size: 12px;
+  font-weight: 900;
+
+  flex-shrink: 0;
+}
+
+.marker:not(.discovered) .marker-dot {
+  background: #fff8df;
+  color: #b47a00;
+}
+
+.marker-number {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: -0.2px;
+}
+
+/* =========================================================
+   추가 모드 배너
+========================================================= */
+
+.adding-banner {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  z-index: 80;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 11px 15px;
+
+  border: 1px solid #e8c46c;
+  border-radius: 12px;
+
+  background: rgba(255, 249, 230, 0.97);
+
+  color: #704c00;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.12);
+}
+
+.adding-banner button {
+  border: 1px solid #d8b45b;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: #ffffff;
+  color: #765100;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.adding-banner button:hover {
+  background: #fff5d7;
+}
+
+/* =========================================================
+   지도 도움말
+========================================================= */
+
+.map-help {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+
+  z-index: 20;
+
+  padding: 12px 14px;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  color: #555;
+
+  font-size: 11px;
+  line-height: 1.8;
+
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.1);
+
+  pointer-events: none;
+}
+
+.map-help span {
+  margin-left: 6px;
+  color: #999;
+}
+
+/* =========================================================
+   위치 추가 버튼
+========================================================= */
+
+.add-button {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+
+  z-index: 40;
+
+  height: 46px;
+
+  padding: 0 18px;
+
+  border: 1px solid #dcae46;
+  border-radius: 12px;
+
+  background: #f4b840;
+  color: #3d2b00;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.18);
+}
+
+.add-button:hover {
+  background: #efae2e;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   토스트
+========================================================= */
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 80px;
+
+  transform: translateX(-50%);
+
+  z-index: 100;
+
+  padding: 10px 16px;
+
+  border-radius: 10px;
+
+  background: rgba(30, 30, 30, 0.92);
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.2);
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   마커 상세 정보창
+========================================================= */
+
+.marker-info {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  z-index: 70;
+
+  width: 355px;
+  max-height: calc(100% - 36px);
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e1e1;
+  border-radius: 15px;
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.18);
+
+  color: #333;
+}
+
+.marker-info::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.marker-info::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb {
+  background: #d5d5d5;
+  border-radius: 10px;
+}
+
+.marker-info::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* =========================================================
+   상세 헤더
+========================================================= */
+
+.marker-info-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 15px;
+}
+
+.marker-label {
+  margin-bottom: 3px;
+  color: #999;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.marker-info-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #222;
+}
+
+.close-button {
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #f3f3f3;
+  color: #666;
+
+  font-size: 23px;
+  line-height: 28px;
+}
+
+.close-button:hover {
+  background: #e8e8e8;
+}
+
+/* =========================================================
+   사진 섹션
+========================================================= */
+
+.photo-section {
+  margin-bottom: 15px;
+}
+
+.photo-title {
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #555;
+}
+
+.photo-preview {
+  overflow: hidden;
+
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+
+  background: #f7f7f7;
+}
+
+.photo-preview > img {
+  display: block;
+
+  width: 100%;
+  max-height: 170px;
+
+  object-fit: contain;
+
+  background: #f3f3f3;
+
+  cursor: zoom-in;
+}
+
+.photo-bottom {
+  display: flex;
+  gap: 6px;
+
+  padding: 7px;
+
+  border-top: 1px solid #e6e6e6;
+  background: #ffffff;
+}
+
+.photo-bottom button {
+  flex: 1;
+
+  height: 31px;
+
+  border: 1px solid #dedede;
+  border-radius: 7px;
+
+  background: #f8f8f8;
+  color: #555;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.photo-bottom button:hover {
+  background: #eeeeee;
+}
+
+/* =========================================================
+   사진 붙여넣기 영역
+========================================================= */
+
+.paste-area {
+  width: 100%;
+  min-height: 135px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  padding: 15px;
+
+  border: 1.5px dashed #d6d6d6;
+  border-radius: 10px;
+
+  background: #fafafa;
+  color: #777;
+
+  text-align: center;
+}
+
+.paste-area:hover {
+  background: #fffaf0;
+  border-color: #e0b64e;
+}
+
+.paste-icon {
+  margin-bottom: 2px;
+  font-size: 24px;
+}
+
+.paste-area strong {
+  color: #555;
+  font-size: 13px;
+}
+
+.paste-area span {
+  font-size: 12px;
+}
+
+.paste-area small {
+  margin-top: 3px;
+  color: #aaa;
+  font-size: 10px;
+}
+
+/* =========================================================
+   붙여넣기 활성화 안내
+========================================================= */
+
+.paste-active {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 13px;
+  padding: 10px 11px;
+
+  border: 1px solid #ecd38e;
+  border-radius: 9px;
+
+  background: #fff8df;
+
+  color: #765500;
+
+  font-size: 11px;
+}
+
+.paste-active b {
+  font-size: 12px;
+}
+
+.paste-active button {
+  margin-left: auto;
+
+  padding: 5px 8px;
+
+  border: 1px solid #d9c17e;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #765500;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   설명
+========================================================= */
+
+.form-section {
+  margin-top: 4px;
+  margin-bottom: 14px;
+}
+
+.form-section label {
+  display: block;
+  margin-bottom: 7px;
+
+  color: #555;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.form-section textarea {
+  width: 100%;
+  min-height: 105px;
+
+  resize: vertical;
+
+  padding: 10px;
+
+  border: 1px solid #dedede;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #fafafa;
+  color: #333;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.form-section textarea:focus {
+  border-color: #e3b74e;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(227, 183, 78, 0.12);
+}
+
+/* =========================================================
+   정보 행
+========================================================= */
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 0;
+
+  border-top: 1px solid #eeeeee;
+
+  font-size: 12px;
+  color: #888;
+}
+
+.info-row b {
+  color: #333;
+  font-size: 13px;
+}
+
+/* =========================================================
+   액션 버튼
+========================================================= */
+
+.marker-actions {
+  display: flex;
+  gap: 8px;
+
+  margin-top: 8px;
+}
+
+.marker-actions button {
+  flex: 1;
+
+  height: 40px;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.save-button {
+  border: 1px solid #dcae46;
+  background: #f4b840;
+  color: #3d2b00;
+}
+
+.save-button:hover {
+  background: #edac2e;
+}
+
+.discovered-button {
+  border: 1px solid #d9d9d9;
+  background: #f7f7f7;
+  color: #777;
+}
+
+.discovered-button:hover {
+  background: #eeeeee;
+}
+
+.discovered-button.active {
+  border-color: #82c98d;
+  background: #e9f8ec;
+  color: #368b45;
+}
+
+/* =========================================================
+   삭제 버튼
+========================================================= */
+
+.delete-button {
+  width: 100%;
+  height: 37px;
+
+  margin-top: 9px;
+
+  border: 1px solid #ead1d1;
+  border-radius: 8px;
+
+  background: #fff7f7;
+  color: #b25b5b;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.delete-button:hover {
+  background: #ffeded;
+  border-color: #e6b8b8;
+}
+
+/* =========================================================
+   사진 확대 모달
+========================================================= */
+
+.image-modal {
+  position: fixed;
+  inset: 0;
+
+  z-index: 200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px;
+
+  background: rgba(0, 0, 0, 0.82);
+
+  cursor: zoom-out;
+}
+
+.image-modal img {
+  display: block;
+
+  max-width: min(94vw, 1400px);
+  max-height: 88vh;
+
+  width: auto;
+  height: auto;
+
+  object-fit: contain;
+
+  border-radius: 8px;
+
+  box-shadow:
+    0 15px 50px rgba(0, 0, 0, 0.4);
+
+  cursor: default;
+}
+
+.image-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+
+  width: 42px;
+  height: 42px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+
+  font-size: 30px;
+  line-height: 36px;
+}
+
+.image-modal-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.image-modal-help {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  color: rgba(255, 255, 255, 0.75);
+
+  font-size: 11px;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   반응형
+========================================================= */
+
+@media (max-width: 1000px) {
+  .sidebar {
+    width: 270px;
+    min-width: 270px;
+  }
+
+  .title {
+    min-width: auto;
+    font-size: 18px;
+  }
+
+  .topbar {
+    gap: 12px;
+    padding: 0 14px;
+  }
+
+  .search-box {
+    width: min(360px, 40vw);
+  }
+
+  .marker-info {
+    width: 330px;
+  }
+}
+
+@media (max-width: 760px) {
+  .sidebar {
+    width: 230px;
+    min-width: 230px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .search-box {
+    width: 220px;
+  }
+
+  .marker-info {
+    width: 300px;
+    right: 10px;
+    top: 10px;
+    max-height: calc(100% - 20px);
+  }
+
+  .map-help {
+    left: 10px;
+    bottom: 10px;
+  }
+
+  .add-button {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+/* =========================================================
+   선택 방지
+========================================================= */
+
+.map-content,
+.map-image,
+.marker {
+  -webkit-touch-callout: none;
+}
+
+.map-image {
+  pointer-events: none;
+}
