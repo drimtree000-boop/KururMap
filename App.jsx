@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import "./App.css";
@@ -37,7 +38,6 @@ function compressImage(file) {
         }
 
         const canvas = document.createElement("canvas");
-
         canvas.width = width;
         canvas.height = height;
 
@@ -48,9 +48,12 @@ function compressImage(file) {
           return;
         }
 
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+
         ctx.drawImage(img, 0, 0, width, height);
 
-        resolve(canvas.toDataURL("image/jpeg", 0.7));
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
       };
 
       img.onerror = () => {
@@ -123,16 +126,17 @@ function createClusters(markers, scale) {
     return [];
   }
 
-  const distance =
-    scale < 1.2
-      ? 3.2
-      : scale < 1.8
-        ? 2.3
-        : scale < 2.5
-          ? 1.5
-          : scale < 3.5
-            ? 0.9
-            : 0.45;
+  let distance = 0.45;
+
+  if (scale < 1.2) {
+    distance = 3.2;
+  } else if (scale < 1.8) {
+    distance = 2.3;
+  } else if (scale < 2.5) {
+    distance = 1.5;
+  } else if (scale < 3.5) {
+    distance = 0.9;
+  }
 
   const clusters = [];
   const used = new Set();
@@ -201,62 +205,43 @@ function App() {
     y: 0,
   });
 
-  const [markers, setMarkers] =
-    useState(INITIAL_MARKERS);
+  const [markers, setMarkers] = useState(INITIAL_MARKERS);
 
-  const [loadingMarkers, setLoadingMarkers] =
-    useState(true);
+  const [loadingMarkers, setLoadingMarkers] = useState(true);
 
-  const [selectedMarker, setSelectedMarker] =
-    useState(null);
+  const [selectedMarker, setSelectedMarker] = useState(null);
 
   const [search, setSearch] = useState("");
 
-  const [activeFilter, setActiveFilter] =
-    useState("all");
+  const [activeFilter, setActiveFilter] = useState("all");
 
-  const [
-    editingDescription,
-    setEditingDescription,
-  ] = useState("");
+  const [editingDescription, setEditingDescription] = useState("");
 
-  const [
-    editingLocationImage,
-    setEditingLocationImage,
-  ] = useState("");
+  const [editingLocationImage, setEditingLocationImage] = useState("");
 
-  const [
-    editingMapImage,
-    setEditingMapImage,
-  ] = useState("");
+  const [editingMapImage, setEditingMapImage] = useState("");
 
-  const [isAddingMarker, setIsAddingMarker] =
-    useState(false);
+  const [isAddingMarker, setIsAddingMarker] = useState(false);
 
-  const [pasteTarget, setPasteTarget] =
-    useState(null);
+  const [pasteTarget, setPasteTarget] = useState(null);
 
   const [toast, setToast] = useState("");
 
-  const [largeImage, setLargeImage] =
-    useState(null);
+  const [largeImage, setLargeImage] = useState(null);
 
-  const [dragging, setDragging] =
-    useState(false);
+  const [dragging, setDragging] = useState(false);
 
   const [dragStart, setDragStart] = useState({
     x: 0,
     y: 0,
   });
 
-  const [startPosition, setStartPosition] =
-    useState({
-      x: 0,
-      y: 0,
-    });
+  const [startPosition, setStartPosition] = useState({
+    x: 0,
+    y: 0,
+  });
 
-  const [didDrag, setDidDrag] =
-    useState(false);
+  const [didDrag, setDidDrag] = useState(false);
 
   const showToast = (message) => {
     setToast(message);
@@ -269,7 +254,7 @@ function App() {
   useEffect(() => {
     let mounted = true;
 
-    const loadMarkers = async () => {
+    async function loadMarkers() {
       try {
         setLoadingMarkers(true);
 
@@ -305,7 +290,7 @@ function App() {
           setLoadingMarkers(false);
         }
       }
-    };
+    }
 
     loadMarkers();
 
@@ -327,9 +312,7 @@ function App() {
         (payload) => {
           if (payload.eventType === "INSERT") {
             const incoming =
-              normalizeMarkers([
-                payload.new,
-              ])[0];
+              normalizeMarkers([payload.new])[0];
 
             if (!incoming) {
               return;
@@ -337,8 +320,7 @@ function App() {
 
             setMarkers((prev) => {
               const exists = prev.some(
-                (marker) =>
-                  marker.id === incoming.id
+                (marker) => marker.id === incoming.id
               );
 
               if (exists) {
@@ -357,9 +339,7 @@ function App() {
 
           if (payload.eventType === "UPDATE") {
             const incoming =
-              normalizeMarkers([
-                payload.new,
-              ])[0];
+              normalizeMarkers([payload.new])[0];
 
             if (!incoming) {
               return;
@@ -382,13 +362,13 @@ function App() {
           }
 
           if (payload.eventType === "DELETE") {
-            const deletedId =
-              Number(payload.old?.id);
+            const deletedId = Number(
+              payload.old?.id
+            );
 
             setMarkers((prev) =>
               prev.filter(
-                (marker) =>
-                  marker.id !== deletedId
+                (marker) => marker.id !== deletedId
               )
             );
 
@@ -409,7 +389,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const updateSize = () => {
+    function updateSize() {
       if (!mapAreaRef.current) {
         return;
       }
@@ -421,7 +401,7 @@ function App() {
         width: rect.width,
         height: rect.height,
       });
-    };
+    }
 
     updateSize();
 
@@ -439,7 +419,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const handlePaste = async (event) => {
+    async function handlePaste(event) {
       if (!pasteTarget) {
         return;
       }
@@ -459,9 +439,7 @@ function App() {
           const file = item.getAsFile();
 
           if (!file) {
-            showToast(
-              "사진을 읽을 수 없습니다."
-            );
+            showToast("사진을 읽을 수 없습니다.");
             return;
           }
 
@@ -475,9 +453,7 @@ function App() {
             const compressed =
               await compressImage(file);
 
-            if (
-              pasteTarget === "location"
-            ) {
+            if (pasteTarget === "location") {
               setEditingLocationImage(
                 compressed
               );
@@ -487,9 +463,7 @@ function App() {
               );
             }
 
-            if (
-              pasteTarget === "map"
-            ) {
+            if (pasteTarget === "map") {
               setEditingMapImage(
                 compressed
               );
@@ -518,7 +492,7 @@ function App() {
       showToast(
         "클립보드에 이미지가 없습니다."
       );
-    };
+    }
 
     window.addEventListener(
       "paste",
@@ -534,7 +508,7 @@ function App() {
   }, [pasteTarget]);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    function handleKeyDown(event) {
       if (event.key !== "Escape") {
         return;
       }
@@ -543,7 +517,7 @@ function App() {
       setPasteTarget(null);
       setIsAddingMarker(false);
       setDragging(false);
-    };
+    }
 
     window.addEventListener(
       "keydown",
@@ -568,7 +542,8 @@ function App() {
     mapAreaSize.height;
 
   if (
-    mapAreaSize.width / mapAreaSize.height >
+    mapAreaSize.width /
+      mapAreaSize.height >
     mapRatio
   ) {
     displayedMapHeight =
@@ -618,13 +593,15 @@ function App() {
       -(
         markerX -
         displayedMapWidth / 2
-      ) * targetScale;
+      ) *
+      targetScale;
 
     const targetY =
       -(
         markerY -
         displayedMapHeight / 2
-      ) * targetScale;
+      ) *
+      targetScale;
 
     setScale(targetScale);
 
@@ -745,24 +722,25 @@ function App() {
     setPasteTarget(null);
     setIsAddingMarker(false);
 
-    const saveNewMarker = async () => {
+    async function saveNewMarker() {
       try {
         showToast(
           "위치를 저장하고 있습니다..."
         );
 
-        const { error } = await supabase
-          .from("markers")
-          .insert({
-            id: newMarker.id,
-            x: newMarker.x,
-            y: newMarker.y,
-            description: "",
-            nickname: "",
-            location_image: "",
-            map_image: "",
-            discovered: false,
-          });
+        const { error } =
+          await supabase
+            .from("markers")
+            .insert({
+              id: newMarker.id,
+              x: newMarker.x,
+              y: newMarker.y,
+              description: "",
+              nickname: "",
+              location_image: "",
+              map_image: "",
+              discovered: false,
+            });
 
         if (error) {
           throw error;
@@ -794,7 +772,7 @@ function App() {
           "위치 저장에 실패했습니다."
         );
       }
-    };
+    }
 
     saveNewMarker();
   };
@@ -815,7 +793,8 @@ function App() {
       return dataUrl;
     }
 
-    const response = await fetch(dataUrl);
+    const response =
+      await fetch(dataUrl);
 
     const blob =
       await response.blob();
@@ -828,7 +807,9 @@ function App() {
       Date.now() +
       ".jpg";
 
-    const { error: uploadError } =
+    const {
+      error: uploadError,
+    } =
       await supabase.storage
         .from("location-images")
         .upload(
@@ -847,9 +828,12 @@ function App() {
 
     const {
       data: publicData,
-    } = supabase.storage
-      .from("location-images")
-      .getPublicUrl(filePath);
+    } =
+      supabase.storage
+        .from("location-images")
+        .getPublicUrl(
+          filePath
+        );
 
     return (
       publicData?.publicUrl || ""
@@ -882,12 +866,9 @@ function App() {
 
       const updatedMarker = {
         ...selectedMarker,
-
         description:
           editingDescription,
-
         locationImage,
-
         mapImage,
       };
 
@@ -897,10 +878,8 @@ function App() {
           .update({
             description:
               updatedMarker.description,
-
             location_image:
               updatedMarker.locationImage,
-
             map_image:
               updatedMarker.mapImage,
           })
@@ -962,7 +941,6 @@ function App() {
 
     const updatedMarker = {
       ...selectedMarker,
-
       discovered:
         nextDiscovered,
     };
@@ -1046,7 +1024,10 @@ function App() {
         await supabase
           .from("markers")
           .delete()
-          .eq("id", deletingId);
+          .eq(
+            "id",
+            deletingId
+          );
 
       if (error) {
         throw error;
@@ -1055,7 +1036,8 @@ function App() {
       setMarkers((prev) =>
         prev.filter(
           (marker) =>
-            marker.id !== deletingId
+            marker.id !==
+            deletingId
         )
       );
 
@@ -1108,6 +1090,8 @@ function App() {
   };
 
   const handleWheel = (event) => {
+    event.preventDefault();
+
     if (event.deltaY < 0) {
       setScale((prev) =>
         Math.min(
@@ -1176,7 +1160,6 @@ function App() {
     setPosition({
       x:
         startPosition.x + dx,
-
       y:
         startPosition.y + dy,
     });
@@ -1211,12 +1194,14 @@ function App() {
       return markers.filter(
         (marker) => {
           const number =
-            String(marker.id)
-              .padStart(3, "0");
+            String(
+              marker.id
+            ).padStart(3, "0");
 
           const description =
             String(
-              marker.description || ""
+              marker.description ||
+                ""
             ).toLowerCase();
 
           const matchesSearch =
@@ -1226,12 +1211,15 @@ function App() {
             ) ||
             String(
               marker.id
-            ).includes(keyword) ||
+            ).includes(
+              keyword
+            ) ||
             description.includes(
               keyword
             );
 
-          let matchesFilter = true;
+          let matchesFilter =
+            true;
 
           if (
             activeFilter ===
@@ -1280,15 +1268,14 @@ function App() {
       activeFilter,
     ]);
 
-  const clusters = useMemo(() => {
-    return createClusters(
-      filteredMarkers,
-      scale
-    );
-  }, [
-    filteredMarkers,
-    scale,
-  ]);
+  const clusters = useMemo(
+    () =>
+      createClusters(
+        filteredMarkers,
+        scale
+      ),
+    [filteredMarkers, scale]
+  );
 
   const handleClusterClick = (
     event,
@@ -1300,7 +1287,6 @@ function App() {
       openMarker(
         cluster.markers[0]
       );
-
       return;
     }
 
@@ -1324,13 +1310,15 @@ function App() {
       -(
         clusterX -
         displayedMapWidth / 2
-      ) * nextScale;
+      ) *
+      nextScale;
 
     const targetY =
       -(
         clusterY -
         displayedMapHeight / 2
-      ) * nextScale;
+      ) *
+      nextScale;
 
     setScale(nextScale);
 
@@ -1345,9 +1333,12 @@ function App() {
     );
   };
 
-  const removeLocationImage = () => {
-    setEditingLocationImage("");
-  };
+  const removeLocationImage =
+    () => {
+      setEditingLocationImage(
+        ""
+      );
+    };
 
   const removeMapImage = () => {
     setEditingMapImage("");
@@ -1379,7 +1370,9 @@ function App() {
               <button
                 type="button"
                 onClick={() =>
-                  setLargeImage(image)
+                  setLargeImage(
+                    image
+                  )
                 }
               >
                 🔍 크게 보기
@@ -1505,6 +1498,7 @@ function App() {
             </div>
 
             <div className="progress-bar">
+
               <div
                 className="progress-fill"
                 style={{
@@ -1519,6 +1513,7 @@ function App() {
                     ) + "%",
                 }}
               />
+
             </div>
 
             <div className="progress-percent">
@@ -1549,7 +1544,9 @@ function App() {
               setActiveFilter("all")
             }
           >
-            <span>전체</span>
+            <span>
+              전체
+            </span>
 
             <span>
               {markers.length}
@@ -1570,7 +1567,9 @@ function App() {
               )
             }
           >
-            <span>미발견</span>
+            <span>
+              미발견
+            </span>
 
             <span>
               {
@@ -1596,7 +1595,9 @@ function App() {
               )
             }
           >
-            <span>발견함</span>
+            <span>
+              발견함
+            </span>
 
             <span>
               {discoveredCount}
@@ -1606,12 +1607,15 @@ function App() {
           <button
             type="button"
             className={
-              activeFilter === "photo"
+              activeFilter ===
+              "photo"
                 ? "filter active"
                 : "filter"
             }
             onClick={() =>
-              setActiveFilter("photo")
+              setActiveFilter(
+                "photo"
+              )
             }
           >
             <span>
@@ -1668,10 +1672,11 @@ function App() {
                         : "location"
                     }
                     onClick={() =>
-                      focusMarker(marker)
+                      focusMarker(
+                        marker
+                      )
                     }
                   >
-
                     <div className="location-main">
 
                       <span>
@@ -1689,6 +1694,7 @@ function App() {
                     </div>
 
                     <small>
+
                       {marker.description
                         ? marker.description
                         : "위치 설명 없음"}
@@ -1699,6 +1705,7 @@ function App() {
                       marker.mapImage
                         ? "📷 사진 있음"
                         : "사진 없음"}
+
                     </small>
 
                   </button>
@@ -1750,28 +1757,32 @@ function App() {
               className="map-content"
               style={{
                 width:
-                  displayedMapWidth +
-                  "px",
+                  `${displayedMapWidth}px`,
 
                 height:
-                  displayedMapHeight +
-                  "px",
+                  `${displayedMapHeight}px`,
+
+                position:
+                  "absolute",
 
                 left: "50%",
 
                 top: "50%",
 
                 transform:
-                  "translate(-50%, -50%) translate(" +
-                  position.x +
-                  "px, " +
-                  position.y +
-                  "px) scale(" +
-                  scale +
-                  ")",
+                  `translate(-50%, -50%) translate3d(${position.x}px, ${position.y}px, 0) scale(${scale})`,
 
                 transformOrigin:
                   "center center",
+
+                willChange:
+                  "transform",
+
+                backfaceVisibility:
+                  "hidden",
+
+                WebkitBackfaceVisibility:
+                  "hidden",
               }}
             >
 
@@ -1779,9 +1790,11 @@ function App() {
                 src="/map.jpg"
                 alt="GTA V Map"
                 className="map-image"
-                draggable="false"
+                draggable={false}
                 width={MAP_WIDTH}
                 height={MAP_HEIGHT}
+                decoding="async"
+                fetchPriority="high"
               />
 
               {clusters.map(
@@ -1804,12 +1817,10 @@ function App() {
                         }
                         style={{
                           left:
-                            marker.x +
-                            "%",
+                            `${marker.x}%`,
 
                           top:
-                            marker.y +
-                            "%",
+                            `${marker.y}%`,
                         }}
                         title={
                           getMarkerNumber(
@@ -1826,9 +1837,7 @@ function App() {
                         ) => {
                           event.stopPropagation();
 
-                          if (
-                            didDrag
-                          ) {
+                          if (didDrag) {
                             return;
                           }
 
@@ -1867,12 +1876,10 @@ function App() {
                       className="marker-cluster"
                       style={{
                         left:
-                          cluster.x +
-                          "%",
+                          `${cluster.x}%`,
 
                         top:
-                          cluster.y +
-                          "%",
+                          `${cluster.y}%`,
                       }}
                       title={
                         cluster.count +
@@ -1886,6 +1893,8 @@ function App() {
                       onClick={(
                         event
                       ) => {
+                        event.stopPropagation();
+
                         if (
                           isAddingMarker
                         ) {
@@ -1980,14 +1989,12 @@ function App() {
               className="marker-info"
               onMouseDown={(
                 event
-              ) => {
-                event.stopPropagation();
-              }}
-              onClick={(
-                event
-              ) => {
-                event.stopPropagation();
-              }}
+              ) =>
+                event.stopPropagation()
+              }
+              onClick={(event) =>
+                event.stopPropagation()
+              }
             >
 
               <div className="marker-info-header">
@@ -2177,11 +2184,9 @@ function App() {
               <img
                 src={largeImage}
                 alt="확대 사진"
-                onClick={(
-                  event
-                ) => {
-                  event.stopPropagation();
-                }}
+                onClick={(event) =>
+                  event.stopPropagation()
+                }
               />
 
               <div className="image-modal-help">
